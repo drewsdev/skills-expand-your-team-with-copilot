@@ -409,13 +409,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Create a stable anchor id for each activity so shared links can open that card.
+  function getActivityAnchorId(activityName) {
+    const slug = activityName
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+    return `activity-${slug || "item"}`;
+  }
+
   // Build share links for one activity card.
   // activityName: the title shown on the card.
   // returns: platform URLs for WhatsApp, X, and Facebook so users can share quickly.
   function buildShareLinks(activityName) {
-    const activityUrl = new URL(window.location.href);
-    activityUrl.hash = `activity-${encodeURIComponent(activityName)}`;
-    const activityUrlString = activityUrl.toString();
+    let activityUrlString = `${window.location.origin}${window.location.pathname}`;
+    const activityAnchorId = getActivityAnchorId(activityName);
+
+    try {
+      const activityUrl = new URL(window.location.href);
+      activityUrl.hash = activityAnchorId;
+      activityUrlString = activityUrl.toString();
+    } catch (error) {
+      console.error("Unable to build activity URL for sharing:", error);
+      activityUrlString = `${activityUrlString}#${activityAnchorId}`;
+    }
+
     const shareText = `Check out this school activity: ${activityName}`;
 
     return {
@@ -498,6 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
+    activityCard.id = getActivityAnchorId(name);
 
     // Calculate spots and capacity
     const totalSpots = details.max_participants;
