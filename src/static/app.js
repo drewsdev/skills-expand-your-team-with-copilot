@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
   const themeToggle = document.getElementById("theme-toggle");
+  const themeToggleIcon = document.getElementById("theme-toggle-icon");
+  const themeToggleText = document.getElementById("theme-toggle-text");
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -58,9 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    themeToggle.innerHTML = isDarkMode
-      ? '<span aria-hidden="true">☀️</span><span>Light Mode</span>'
-      : '<span aria-hidden="true">🌙</span><span>Dark Mode</span>';
+    if (themeToggleIcon) {
+      themeToggleIcon.textContent = isDarkMode ? "☀️" : "🌙";
+    }
+
+    if (themeToggleText) {
+      themeToggleText.textContent = isDarkMode ? "Light Mode" : "Dark Mode";
+    }
+
     themeToggle.setAttribute("aria-pressed", isDarkMode.toString());
     themeToggle.setAttribute(
       "aria-label",
@@ -76,7 +83,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function initializeTheme() {
     const savedTheme = localStorage.getItem("theme");
-    applyTheme(savedTheme === "dark");
+    if (savedTheme) {
+      applyTheme(savedTheme === "dark");
+      return;
+    }
+
+    const prefersDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    applyTheme(prefersDarkMode);
   }
 
   // Initialize filters from active elements
