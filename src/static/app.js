@@ -420,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
       whatsapp: `https://wa.me/?text=${encodeURIComponent(
         `${shareText} ${activityUrl}`
       )}`,
-      x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      x: `https://x.com/intent/tweet?text=${encodeURIComponent(
         shareText
       )}&url=${encodeURIComponent(activityUrl)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
