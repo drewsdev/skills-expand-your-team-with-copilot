@@ -32,6 +32,20 @@
   --info-light: #d1ecf1;
 }
 
+body.dark-mode {
+  --primary: #3f51b5;
+  --primary-light: #6f74dd;
+  --primary-dark: #002984;
+  --primary-text: #ffffff;
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #f1f1f1;
+  --text-secondary: #d0d0d0;
+  --border: #3a3a3a;
+  --border-light: #2a2a2a;
+  --border-focus: #5a5a5a;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -660,6 +674,10 @@ footer {
   position: absolute;
   top: 10px;
   right: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
 }
 
 #user-status {
