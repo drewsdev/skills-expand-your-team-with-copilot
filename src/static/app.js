@@ -409,8 +409,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Create a stable anchor id for each activity so shared links can open that card.
-  function getActivityAnchorId(activityName) {
+  // Create a stable link id for each activity so shared links can open that card.
+  function createActivityLinkId(activityName) {
     const slug = activityName
       .toLowerCase()
       .trim()
@@ -423,9 +423,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Build share links for one activity card.
   // activityName: the title shown on the card.
   // returns: platform URLs for WhatsApp, X, and Facebook so users can share quickly.
+  // If URL creation fails, it falls back to a simpler page URL with the same activity link id.
   function buildShareLinks(activityName) {
     let activityUrlString = `${window.location.origin}${window.location.pathname}`;
-    const activityAnchorId = getActivityAnchorId(activityName);
+    const activityAnchorId = createActivityLinkId(activityName);
 
     try {
       const activityUrl = new URL(window.location.href);
@@ -518,7 +519,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
-    activityCard.id = getActivityAnchorId(name);
+    activityCard.id = createActivityLinkId(name);
 
     // Calculate spots and capacity
     const totalSpots = details.max_participants;
