@@ -409,6 +409,61 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Create a stable anchor id for each activity so shared links can open that card.
+  function createActivityAnchorId(activityName) {
+    const slug = activityName
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+    if (slug) {
+      return `activity-${slug}`;
+    }
+
+    const fallbackId = Array.from(activityName || "")
+      .map((char) => char.charCodeAt(0).toString(16))
+      .join("");
+
+    return `activity-${fallbackId || "unknown"}`;
+  }
+
+  // Build share links for one activity card.
+  // activityName: the title shown on the card.
+  // returns: platform URLs for WhatsApp, X, and Facebook so users can share quickly.
+  // If URL creation fails, it falls back to a simpler page URL with the same activity link id.
+  function buildShareLinks(activityName) {
+    let activityUrlString = `${window.location.origin}${window.location.pathname}`;
+    const activityAnchorId = createActivityAnchorId(activityName);
+
+    try {
+      const activityUrl = new URL(window.location.href);
+      activityUrl.hash = activityAnchorId;
+      activityUrlString = activityUrl.toString();
+    } catch (error) {
+      console.error(
+        `Failed to create share URL for activity "${activityName}": ${
+          error?.message || "Unknown error"
+        }`
+      );
+      activityUrlString = `${activityUrlString}#${activityAnchorId}`;
+    }
+
+    const shareText = `Check out this school activity: ${activityName}`;
+
+    return {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(
+        `${shareText} ${activityUrlString}`
+      )}`,
+      x: `https://x.com/intent/tweet?text=${encodeURIComponent(
+        shareText
+      )}&url=${encodeURIComponent(activityUrlString)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        activityUrlString
+      )}`,
+    };
+  }
+
   // Function to display filtered activities
   function displayFilteredActivities() {
     // Clear the activities list
@@ -476,6 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
+    activityCard.id = createActivityAnchorId(name);
 
     // Calculate spots and capacity
     const totalSpots = details.max_participants;
@@ -498,6 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const shareLinks = buildShareLinks(name);
 
     // Create activity tag
     const tagHtml = `
@@ -568,6 +625,39 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+      </div>
+      <div class="share-actions">
+        <span class="share-label">Share:</span>
+        <a
+          class="share-button share-whatsapp"
+          href="${shareLinks.whatsapp}"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share on WhatsApp"
+          aria-label="Share ${name} on WhatsApp"
+        >
+          WhatsApp
+        </a>
+        <a
+          class="share-button share-x"
+          href="${shareLinks.x}"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share on X"
+          aria-label="Share ${name} on X"
+        >
+          X
+        </a>
+        <a
+          class="share-button share-facebook"
+          href="${shareLinks.facebook}"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share on Facebook"
+          aria-label="Share ${name} on Facebook"
+        >
+          Facebook
+        </a>
       </div>
     `;
 
