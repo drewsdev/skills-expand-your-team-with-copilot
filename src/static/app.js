@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     weekend: { days: ["Saturday", "Sunday"] }, // Weekend days
   };
 
-  function updateThemeButtonText() {
+  function updateThemeToggleUI() {
     if (!themeToggle) {
       return;
     }
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function applyTheme(isDark) {
     isDarkMode = isDark;
     document.body.classList.toggle("dark-mode", isDarkMode);
-    updateThemeButtonText();
+    updateThemeToggleUI();
   }
 
   function initializeTheme() {
