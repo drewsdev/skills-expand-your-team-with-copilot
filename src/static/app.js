@@ -62,6 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
       ? '<span aria-hidden="true">☀️</span><span>Light Mode</span>'
       : '<span aria-hidden="true">🌙</span><span>Dark Mode</span>';
     themeToggle.setAttribute("aria-pressed", isDarkMode.toString());
+    themeToggle.setAttribute(
+      "aria-label",
+      isDarkMode ? "Switch to light mode" : "Switch to dark mode"
+    );
   }
 
   function applyTheme(isDark) {
