@@ -409,15 +409,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Create a stable link id for each activity so shared links can open that card.
-  function createActivityLinkId(activityName) {
+  // Create a stable anchor id for each activity so shared links can open that card.
+  function createActivityAnchorId(activityName) {
     const slug = activityName
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-    return `activity-${slug || "item"}`;
+    if (slug) {
+      return `activity-${slug}`;
+    }
+
+    const fallbackId = Array.from(activityName || "")
+      .map((char) => char.charCodeAt(0).toString(16))
+      .join("");
+
+    return `activity-${fallbackId || "unknown"}`;
   }
 
   // Build share links for one activity card.
@@ -426,14 +434,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // If URL creation fails, it falls back to a simpler page URL with the same activity link id.
   function buildShareLinks(activityName) {
     let activityUrlString = `${window.location.origin}${window.location.pathname}`;
-    const activityAnchorId = createActivityLinkId(activityName);
+    const activityAnchorId = createActivityAnchorId(activityName);
 
     try {
       const activityUrl = new URL(window.location.href);
       activityUrl.hash = activityAnchorId;
       activityUrlString = activityUrl.toString();
     } catch (error) {
-      console.error("Unable to build activity URL for sharing:", error);
+      console.error(
+        `Failed to create share URL for activity "${activityName}": ${
+          error?.message || "Unknown error"
+        }`
+      );
       activityUrlString = `${activityUrlString}#${activityAnchorId}`;
     }
 
@@ -519,7 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
-    activityCard.id = createActivityLinkId(name);
+    activityCard.id = createActivityAnchorId(name);
 
     // Calculate spots and capacity
     const totalSpots = details.max_participants;
