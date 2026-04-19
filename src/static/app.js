@@ -409,22 +409,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Build social share links for an activity
+  // Build share links for one activity card.
+  // activityName: the title shown on the card.
+  // returns: platform URLs for WhatsApp, X, and Facebook so users can share quickly.
   function buildShareLinks(activityName) {
-    const activityUrl = `${window.location.origin}${
-      window.location.pathname
-    }#activity-${encodeURIComponent(activityName)}`;
+    const activityUrl = new URL(window.location.href);
+    activityUrl.hash = `activity-${encodeURIComponent(activityName)}`;
+    const activityUrlString = activityUrl.toString();
     const shareText = `Check out this school activity: ${activityName}`;
 
     return {
       whatsapp: `https://wa.me/?text=${encodeURIComponent(
-        `${shareText} ${activityUrl}`
+        `${shareText} ${activityUrlString}`
       )}`,
       x: `https://x.com/intent/tweet?text=${encodeURIComponent(
         shareText
-      )}&url=${encodeURIComponent(activityUrl)}`,
+      )}&url=${encodeURIComponent(activityUrlString)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        activityUrl
+        activityUrlString
       )}`,
     };
   }
