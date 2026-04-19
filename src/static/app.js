@@ -409,6 +409,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Build social share links for an activity
+  function buildShareLinks(activityName) {
+    const activityUrl = `${window.location.origin}${
+      window.location.pathname
+    }#activity-${encodeURIComponent(activityName)}`;
+    const shareText = `Check out this school activity: ${activityName}`;
+
+    return {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(
+        `${shareText} ${activityUrl}`
+      )}`,
+      x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        shareText
+      )}&url=${encodeURIComponent(activityUrl)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        activityUrl
+      )}`,
+    };
+  }
+
   // Function to display filtered activities
   function displayFilteredActivities() {
     // Clear the activities list
@@ -498,6 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const shareLinks = buildShareLinks(name);
 
     // Create activity tag
     const tagHtml = `
@@ -568,6 +589,39 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+      </div>
+      <div class="share-actions">
+        <span class="share-label">Share:</span>
+        <a
+          class="share-button share-whatsapp"
+          href="${shareLinks.whatsapp}"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share on WhatsApp"
+          aria-label="Share ${name} on WhatsApp"
+        >
+          WhatsApp
+        </a>
+        <a
+          class="share-button share-x"
+          href="${shareLinks.x}"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share on X"
+          aria-label="Share ${name} on X"
+        >
+          X
+        </a>
+        <a
+          class="share-button share-facebook"
+          href="${shareLinks.facebook}"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share on Facebook"
+          aria-label="Share ${name} on Facebook"
+        >
+          Facebook
+        </a>
       </div>
     `;
 
